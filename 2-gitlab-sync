@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source .env
+
+TMPDIR=./tmp
+
+for f in `ls $TMPDIR`
+do
+    echo “Processing $f file …”
+    cat $TMPDIR/$f  | jq '.[] | .namespace.path,.path,.http_url_to_repo' | xargs -n3 ./gitlab-sync
+done

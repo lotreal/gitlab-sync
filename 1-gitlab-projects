@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source .env
+
+ENDPOINT="${GITLAB_URL}/projects?per_page=${PAGESIZE}&page="
+
+TMPDIR=./tmp
+
+rm -rf $TMPDIR && mkdir -p $TMPDIR
+
+PAGES=$(curl -s -I -H "PRIVATE-TOKEN: ${GITLAB_PRIVATE_TOKEN}" $ENDPOINT | grep X-Total-Pages | grep -oEi '[0-9]+')
+
+for p in $(seq 1 $PAGES); do
+    curl -s -H "PRIVATE-TOKEN: ${GITLAB_PRIVATE_TOKEN}" $ENDPOINT$p -o $TMPDIR/p$p;
+done

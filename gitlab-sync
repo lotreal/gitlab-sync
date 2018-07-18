@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source .env
+
+mkdir -p $WORKSPACE && cd $WORKSPACE
+
+GROUP=$1
+NAME=$2
+REPO=$3
+
+# TODO check dir exsits
+DIR=$GROUP/$NAME
+echo "DIR: $DIR  REPO: $REPO"
+
+if [ "$(ls -A $DIR)" ]; then
+    echo "Take action $DIR is not Empty"
+    cd $DIR && git pull origin master
+else
+    (mkdir -p $GROUP && cd $GROUP && git clone $REPO)
+fi
